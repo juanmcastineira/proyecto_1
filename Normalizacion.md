@@ -1,7 +1,7 @@
-## Normalización de los datos
+# Normalización de los datos
 Se tomo una base de datos sobre ventas de productos con este formato de tabla
 
-![image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43583a71ee/raw.png)
+[image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43583a71ee/raw.png)
 
 se procedio a hacer las tablas de distintas columnas para ponerle un ID a cada atributo unico.
 Las colmunas que se tomaron son:
@@ -111,4 +111,4 @@ Aclaro que es necesario hacerla de esta manera ya que si no hacen todas las perm
 
 Queda entonces la siguiente disposicion de tablas normalizadas
 
-![image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43)83a71ee/finish.png
+[image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43)83a71ee/finish.png
