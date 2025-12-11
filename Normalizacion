@@ -5,15 +5,15 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 se procedio a hacer las tablas de distintas columnas para ponerle un ID a cada atributo unico.
 Las colmunas que se tomaron son:
-  -Category
-  -Item
-  -Color
-  -Size
-  -Season
-  -Payment
-  -Location
-  -Shipping
-  -Frecuency
+  - *Category*
+  - *Item*
+  - *Color*
+  - *Size*
+  - *Season*
+  - *Payment*
+  - *Location*
+  - *Shipping*
+  - *Frecuency*
 
 Estas tablas (salvo la tabla de Item) comparten el siguiente querry:
 
@@ -53,4 +53,61 @@ Para eso creo una vista que incluya todos los IDs
 >join color c on c.color= sh.Color
 >join size s on s.size = sh.Size;
 
-armo l
+armo las siguientes tablas:
+ -*Item_Purchase*
+    -ItemPurchaseID
+    -Item_ID
+    -Color_ID
+    -Size_ID
+
+ -*Purchase_Condition*
+    -PurchaseCond-itionID
+    -Location_ID
+    -Season_ID
+    -Shipping_ID
+    -Payment_ID
+
+-*Customer_Info*
+    -Customer_ID
+    -age
+    -Gender
+    -Subscription_Status
+    -Previous_Purchaces
+    -Frecuency_ID
+Por ultimo hago una tabla que abarque los ID de las tablas anteriores
+
+>with ranked as(
+>select sh.customer_id,
+>    i.itempurchaseid,
+>    p.purchaseconditionid,
+>    sh.Discount_Applied,
+>    sh.PurchaseAmountUSD,
+>    sh.Rating,
+>        rownumber() over (partition by sh.customerid order by sh.customerID,p.purchasecondition_id) as rn
+>    from shopping_view sh
+>    join itempurchase i on i.itemid = sh.Itemid and i.colorid= sh.colorid and i.sizeid = sh.size_id
+>join purchasecondition p on p.locationid= sh.Locationid and p.seasonid = sh.seasonid and p.shippingid = sh.shippingid and p.paymentid = sh.payment_id
+>)
+> 
+>insertinto purchaseinfo(  customerid,
+>  itempurchaseid,
+>  purchaseconditionid,
+>  discount_applied,
+>  purchaseamountusd,
+>  review_rating
+>)
+>SELECT
+>  customer_id,
+>  itempurchaseid,
+>  purchaseconditionid,
+>  discount_applied,
+>  purchaseamountusd,
+>  rating
+>FROM Ranked
+>WHERE rn = 1;
+
+Aclaro que es necesario hacerla de esta manera ya que si no hacen todas las permutaciones de los IDs.
+
+Queda entonces la siguiente disposicion de tablas normalizadas
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
