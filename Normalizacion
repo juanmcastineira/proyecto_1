@@ -1,19 +1,19 @@
-# Normalización de los datos
+## Normalización de los datos
 Se tomo una base de datos sobre ventas de productos con este formato de tabla
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+![image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43583a71ee/raw.png)
 
 se procedio a hacer las tablas de distintas columnas para ponerle un ID a cada atributo unico.
 Las colmunas que se tomaron son:
-  - *Category*
-  - *Item*
-  - *Color*
-  - *Size*
-  - *Season*
-  - *Payment*
-  - *Location*
-  - *Shipping*
-  - *Frecuency*
+  - **Category**
+  - **Item**
+  - **Color**
+  - **Size**
+  - **Season**
+  - **Payment**
+  - **Location**
+  - **Shipping**
+  - **Frecuency**
 
 Estas tablas (salvo la tabla de Item) comparten el siguiente querry:
 
@@ -54,26 +54,27 @@ Para eso creo una vista que incluya todos los IDs
 >join size s on s.size = sh.Size;
 
 armo las siguientes tablas:
- -*Item_Purchase*
+ - **Item_Purchase**
     -ItemPurchaseID
     -Item_ID
     -Color_ID
     -Size_ID
 
- -*Purchase_Condition*
+ - **Purchase_Condition**
     -PurchaseCond-itionID
     -Location_ID
     -Season_ID
     -Shipping_ID
     -Payment_ID
 
--*Customer_Info*
+- **Customer_Info**
     -Customer_ID
     -age
     -Gender
     -Subscription_Status
     -Previous_Purchaces
     -Frecuency_ID
+
 Por ultimo hago una tabla que abarque los ID de las tablas anteriores
 
 >with ranked as(
@@ -110,4 +111,4 @@ Aclaro que es necesario hacerla de esta manera ya que si no hacen todas las perm
 
 Queda entonces la siguiente disposicion de tablas normalizadas
 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+![image alt](https://github.com/juanmcastineira/proyecto_1/blob/e8dbd224ec7f385bfb81b850faa52d43)83a71ee/finish.png
