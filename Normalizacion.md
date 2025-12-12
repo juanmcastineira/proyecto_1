@@ -55,13 +55,13 @@ Para eso creo una vista que incluya todos los IDs
 
 armo las siguientes tablas:
  - **Item_Purchase**
-    -ItemPurchaseID
+    -Item_purchase_ID
     -Item_ID
     -Color_ID
     -Size_ID
 
  - **Purchase_Condition**
-    -PurchaseCond-itionID
+    -Purchase_Condition_ID
     -Location_ID
     -Season_ID
     -Shipping_ID
@@ -98,12 +98,7 @@ Por ultimo hago una tabla que abarque los ID de las tablas anteriores
 >  review_rating
 >)
 >SELECT
->  customer_id,
->  itempurchaseid,
->  purchaseconditionid,
->  discount_applied,
->  purchaseamountusd,
->  rating
+>  Customer_ID, Item_Purchase_ID, Purchase_Condition_ID, Discount_Applied, Purchase_Amountusd, rating
 >FROM Ranked
 >WHERE rn = 1;
 
