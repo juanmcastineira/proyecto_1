@@ -1,0 +1,74 @@
+#Analisis de datos
+
+Se quieren hacer analisis de distintos factores de la tabla
+primero  quiero ver si puedo encontrar un perfil de comprador para eso primero hago una view para separar a los clientes en clusteers de edad de la siguiente manera 
+>create view sh_v as
+>select * from shopping
+>ALTER VIEW sh_v AS
+>SELECT
+>    sh.*,
+>    CASE 
+>        WHEN sh.age <30  THEN '18-30'
+>        when Age BETWEEN 30 AND 40 THEN '30-40'
+>        when Age BETWEEN 40 AND 50 THEN '40-50'
+>        when Age BETWEEN 50 AND 60 THEN '50-60'
+>               ELSE '60-70'
+>    END AS Cluster_edad,
+>   CAST( CASE WHEN subscription_Status = 'yes' 1 else 0 end) as float) as SS
+>   FROM shopping sh;
+
+Luego veo cuantos clientes hay por las distintas permutaciones asi como la cantidad de subscripto y el porcentaje de los mismos 
+
+>SELECT
+>Gender, Cluster_edad,COUNT(*) AS cantidad, sum(ss) AS Sub_cant, sum(SS)/count(*) AS Sub_rate
+>FROM sh_v
+>GROUP BY Gender,Cluster_edad
+>ORDER BY Gender, Cluster_edad
+
+dandome los siguientes resultados 
+
+xxxxxxxxxxxxxxx
+
+Quiero saber que productos le ganan al promedio de venta de productos 
+
+>SELECT 
+>    item_purchase, 
+>    size, 
+>    colour, 
+>    SUM(price_amount) AS Total
+>FROM raw
+>GROUP BY 
+>    item_purchase, 
+>    size, 
+>    colour
+>HAVING SUM(price_amount) > (
+>    SELECT AVG(sub.totalb)
+>    FROM (
+>        SELECT SUM(price_amount) AS totalb
+>        FROM raw
+>        GROUP BY item_purchase, size, colour
+>    ) AS sub
+>);
+
+dando 
+xxxxxxxxxxxxxxxxxxx
+
+El objetivo es identificar variables determinantes en el Rating. Para ello, se segmentó a los clientes en el percentil superior (Top 10%) y se contrastó la distribución de sus atributos frente al promedio poblacional. El objetivo es identificar desviaciones significativas que sugieran una correlación entre ciertos factores y un Rating elevado.
+
+>WITH segmentacion AS(
+>SELECT  *, CASE WHEN PERCENT_RANK() OVER( PARTITION BY Review_Rating) >= 0.9 AS 'top' else 'general' END AS segmentacion_cliente)
+>FROM sh_v
+
+Luego aplico el siguiente querry para los parametros de Subscription_Status,Category, Discount_Applied, Payment_Method, Cluster_Edad y Shipping_type para ver si hay desviaciones.
+
+>SELECT 
+>subscription_Status, COUNT(CASE WHEN segmentacion_cliente ='top' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'top') as percent_top, COUNT(CASE WHEN segmentacion_cliente ='general' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'general') as percent_gral
+>FROM segmentacion
+>GROUP BY subscription_Status
+
+Los resultados son los siguientes
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+
