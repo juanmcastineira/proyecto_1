@@ -21,12 +21,12 @@ Luego veo cuantos clientes hay por las distintas permutaciones asi como la canti
 >SELECT
 >Gender, Cluster_edad,COUNT(*) AS cantidad, SUM(ss) AS Sub_cant, ROUND(SUM(SS)/COUNT(*),2) AS Sub_rate
 >FROM sh_v
->GROUP BY Gender,Cluster_edad
->ORDER BY Gender, Cluster_edad
+>GROUP BY `Gender`,`Cluster_edad`
+>ORDER BY `Gender`, `Cluster_edad`
 
 dandome los siguientes resultados 
 
-[image alt](https://github.com/juanmcastineira/proyecto_1/blob/d1fcf25c2eb722e95ad0b42ab64f1711b9344185/images/SUBS.png)
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
 
 Quiero saber que por cada categoria cual es el producto que mas ganancias dio y cual es el que mas vendio 
 
@@ -64,8 +64,11 @@ Quiero saber que por cada categoria cual es el producto que mas ganancias dio y 
 >    ) AS cantidad_max
 >FROM VentasAgrupadas;
 
-dando 
-[image alt](https://github.com/juanmcastineira/proyecto_1/blob/d1fcf25c2eb722e95ad0b42ab64f1711b9344185/images/categorias.png)
+dando
+
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/categorias.png)
+
+
 
 El objetivo es identificar variables determinantes en el Rating. Para ello, se segmentó a los clientes en el percentil superior (Top 10%) y se contrastó la distribución de sus atributos frente al promedio poblacional. El objetivo es identificar desviaciones significativas que sugieran una correlación entre ciertos factores y un Rating elevado.
 
@@ -82,6 +85,6 @@ Luego aplico el siguiente querry para los parametros de Subscription_Status,Cate
 
 Los resultados son los siguientes
 
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/subsctription.png)
 
 
