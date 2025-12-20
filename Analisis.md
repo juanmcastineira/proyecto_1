@@ -31,10 +31,14 @@ dandome los siguientes resultados
 
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
 ### resultados
-Se puede apreciar que el publico 
+Se puede apreciar que el perfil de consumidor es en su mayoria hombres  y que estos son los unicos que se subscriben.
+Se  puede apreciar tambien que el cluster con mayor cantidad de compradores son los hombres entre 18 a 30 pero que el porcentaje de gente subscripta no lo refleja ya que es bastante homogenos en todos los clusters de edad
+
 ## Analisis de productos
 
-Quiero saber que por cada categoria cual es el producto que mas ganancias dio y cual es el que mas vendio 
+Quiero saber que por cada categoria cual es el producto que mas ganancias dio y cual es el que mas vendio asi como la que menos se vendio
+
+mediante:
 
 ```sql WITH VentasAgrupadas AS (
     SELECT >
@@ -69,13 +73,15 @@ SELECT DISTINCT
         ORDER BY TotalCantidad DESC
     ) AS cantidad_max
 FROM VentasAgrupadas;
+-- PARA LOS MENOS VENDIDOS CAMBIO DESC POR ASC 
 ```
 
 dando
 
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/categorias.png)
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/min.png)
 ### resultados
-
+Se puede apreciar que en Footwear y Outwear no concuerda el producto mas frecuente y el producto que mas se vendio pero como se puede apreciar en la tabla siguiente la diferecia entre ellos es despreciable 
 ## Analisis del rating
 
 El objetivo es identificar variables determinantes en el Rating. Para ello, se segmentó a los clientes en el percentil superior (Top 10%) y se contrastó la distribución de sus atributos frente al promedio poblacional. El objetivo es identificar desviaciones significativas que sugieran una correlación entre ciertos factores y un Rating elevado.
