@@ -81,7 +81,12 @@ dando
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/categorias.png)
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/min.png)
 ### resultados
-Se puede apreciar que en Footwear y Outwear no concuerda el producto mas frecuente y el producto que mas se vendio pero como se puede apreciar en la tabla siguiente la diferecia entre ellos es despreciable 
+Se puede apreciar lo siguiente:
+-Accesory: 81,8||18 
+-Clothing: 72,5||37,9
+-Footwear: 76,6|| 7
+-outerwear al ser dos productos solo se puede hacer comparacion directa y son basicamente lo mismo para este analisis
+-conclucion general:
 ## Analisis del rating
 
 El objetivo es identificar variables determinantes en el Rating. Para ello, se segmentó a los clientes en el percentil superior (Top 10%) y se contrastó la distribución de sus atributos frente al promedio poblacional. El objetivo es identificar desviaciones significativas que sugieran una correlación entre ciertos factores y un Rating elevado.
