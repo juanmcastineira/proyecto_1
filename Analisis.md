@@ -39,8 +39,12 @@ ORDER BY Gender, Cluster_edad
 ```
 dandome los siguientes resultados 
 
+
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/mf.png)
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/cluster.png)
+
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUB.png)
+
 ### resultados
 Como primer dato a destacar se ve que no hay subscripciones femeninas, tambien se puede apreciar que en el rango etario con mayor cantidad de 
 
