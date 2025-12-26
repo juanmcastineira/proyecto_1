@@ -38,11 +38,11 @@ GROUP BY Gender,Cluster_edad
 ORDER BY Gender, Cluster_edad
 ```
 dandome los siguientes resultados 
+
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/mf.png)
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
 ### resultados
-Se puede apreciar que el perfil de consumidor es en su mayoria hombres  y que estos son los unicos que se subscriben.
-Se  puede apreciar tambien que el cluster con mayor cantidad de compradores son los hombres entre 18 a 30 pero que el porcentaje de gente subscripta no lo refleja ya que es bastante homogenos en todos los clusters de edad
+Como primer dato a destacar se ve que no hay subscripciones femeninas, tambien se puede apreciar que en el rango etario con mayor cantidad de 
 
 ## Analisis de productos
 
