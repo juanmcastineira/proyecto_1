@@ -11,24 +11,34 @@ ALTER VIEW sh_v AS
 SELECT
     sh.*,
     CASE 
-        WHEN sh.age <30  THEN '18-30'
-        WHEN Age BETWEEN 30 AND 40 THEN '30-40'
-        WHEN Age BETWEEN 40 AND 50 THEN '40-50'
-        WHEN Age BETWEEN 50 AND 60 THEN '50-60'
-        ELSE '60-70' END AS Cluster_edad,
+        WHEN sh.age <25  THEN '18-25'
+        when Age BETWEEN 25 AND 30 THEN '35-40'
+        when Age BETWEEN 30 AND 35 THEN '30-35'
+        when Age BETWEEN 35 AND 40 THEN '35-40'
+        when Age BETWEEN 40 AND 45 THEN '40-45'
+        when Age BETWEEN 45 AND 50 THEN '45-50'
+        when Age BETWEEN 50 AND 55 THEN '50-55'
+        when Age BETWEEN 55 AND 60 THEN '55-60'
+        ELSE '60-70' END AS Cluster_edad,,
    CAST( CASE WHEN subscription_Status = 'yes' THEN 1 ELSE 0 END) AS FLOAT) AS SS
    FROM shopping.shopping sh;
 ```
 Luego veo cuantos clientes hay por las distintas permutaciones asi como la cantidad de subscripto y el porcentaje de los mismos 
-
+```SELECT 
+    gender,
+    COUNT(*) AS cantidad,
+    CONCAT(ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM shopping), 2), '%') AS porcentaje
+FROM sh_v
+GROUP BY gender;
+```
 ```sql SELECT
 Gender, Cluster_edad,COUNT(*) AS cantidad, SUM(ss) AS Sub_cant, ROUND(SUM(SS)/COUNT(*),2) AS Sub_rate
 FROM sh_v
-GROUP BY `Gender`,`Cluster_edad`
-ORDER BY `Gender`, `Cluster_edad`
+GROUP BY Gender,Cluster_edad
+ORDER BY Gender, Cluster_edad
 ```
 dandome los siguientes resultados 
-
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/mf.png)
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/SUBS.png)
 ### resultados
 Se puede apreciar que el perfil de consumidor es en su mayoria hombres  y que estos son los unicos que se subscriben.
