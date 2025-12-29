@@ -107,19 +107,25 @@ GROUP BY gender;
 | Male | 61-65 | 244 | 107 | 43.85% |
 | Male | 65+ | 251 | 88 | 35.06% |
 
+Separacion por region
+
+
 ```sql
-SELECT 
-    region, 
-    gender,
-    COUNT(*) AS cantidad, 
-    -- Porcentaje respecto al TOTAL de la tabla
-    CONCAT(ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 2), '%') AS porcentaje_total,
-    -- Porcentaje respecto al total de su GÉNERO 
-    CONCAT(ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(PARTITION BY gender), 2), '%') AS porcentaje_por_genero
+    SELECT 
+    region,
+    COUNT(*) AS cantidad,
+    CONCAT(ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM shopping), 2), '%')  AS percent_tot,
+    CONCAT(ROUND(sum(ss) * 100.0 / (SELECT COUNT(*) FROM shopping), 2), '%')  AS percent_sub
 FROM sh_v
-GROUP BY region, gender
-ORDER BY gender, cantidad DESC;
+GROUP BY REGION
+order by cantidad desc;
 ```
+| Region | cantidad | percent_tot | percent_sub |
+|---|---|---|---|
+| South | 1271 | 32.59% | 9.26% |
+| West | 1018 | 26.10% | 7.13% |
+| Midwest | 937 | 24.03% | 6.18% |
+| Northeast | 674 | 17.28% | 4.44% |
 
 ```sql
 WITH cte AS (
@@ -142,7 +148,8 @@ SELECT
     CONCAT(ROUND(porcentaje_decimal, 2), '%') AS porcentaje,
     -- PORCENTAJE CORRIENTE 
     CONCAT(ROUND(SUM(porcentaje_decimal) OVER(ORDER BY cantidad DESC), 2), '%') AS porcentaje_corriente,
-    -- Ranking para control
+
+  -- Ranking para control
     RANK() OVER(ORDER BY cantidad DESC) AS rn
 FROM cte
 ORDER BY cantidad DESC;
@@ -245,6 +252,7 @@ ORDER BY cantidad DESC;
 | Northeast | Female | 65+ | 12 | 0.31% | 100.00% | 80 |
 
 </details>
+Hice un desglose de los datos dando lo siguiente:
 
 | Cluster_edad | Cantidad |
 |---|---|
@@ -259,10 +267,7 @@ ORDER BY cantidad DESC;
 | 51-55 | 2 |
 | 61-65 | 1 |
 
-
-
-
-
+    
 | region | Cantidad |
 |---|---|
 | South | 10 |
@@ -316,9 +321,21 @@ FROM VentasAgrupadas;
 ```
 
 dando
+| Category | prod_max_ingresos | monto_max | prod_mas_frecuente | cantidad_max |
+|---|---|---|---|---|
+| Accessories | Jewelry | 10010 | Jewelry | 171 |
+| Clothing | Blouse | 10410 | Blouse | 171 |
+| Footwear | Shoes | 9240 | Sandals | 160 |
+| Outerwear | Coat | 9275 | Jacket | 163 |
 
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/categorias.png)
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/min.png)
+| Category | prod_max_ingresos | monto_max | prod_mas_frecuente | cantidad_max |
+|---|---|---|---|---|
+| Accessories | Gloves | 8477 | Gloves | 140 |
+| Clothing | Jeans | 7548 | Jeans | 124x |
+| Footwear | Sneakers | 8635 | Boots | 144 |
+| Outerwear | Jacket | 9249 | Coat | 161 |
+
+
 ### resultados
 Se puede apreciar lo siguientes:
 | Categoría | Brecha Cantidad | Brecha Monto | 
@@ -348,14 +365,19 @@ FROM sh_v
 ```
 Luego aplico el siguiente querry para los parametros de Subscription_Status,Category, Discount_Applied, Payment_Method, Cluster_Edad y Shipping_type para ver si hay desviaciones.
 
-```sql SELECT 
-subscription_Status, COUNT(CASE WHEN segmentacion_cliente ='top' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'top') as percent_top, COUNT(CASE WHEN segmentacion_cliente ='general' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'general') as percent_gral
-FROM segmentacion
+```sql SELECT  
+    subscription_Status,
+    COUNT(CASE WHEN segmentacion_cliente ='top' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'top') as percent_top,
+    COUNT(CASE WHEN segmentacion_cliente ='general' THEN 1 END)*1.0)/COUNT(*) FILTER ( WHEN segmentacion_cliente = 'general') as percent_gral
+FROM segmentacion 
 GROUP BY subscription_Status
 ```
 Los resultados son los siguientes
 
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/subsctription.png)
+| Subscription Status | percent_top | percent_gral |
+|---|---|---|
+| No | 73.54% | 72.94% |
+| Yes | 26.46% | 27.06% |
 
 ### resultados
 
