@@ -1,10 +1,13 @@
-# Normalización de los datos
-Se tomo una base de datos sobre ventas de productos con este formato de tabla
+# Normalización de datos de venta
+Se partió de una base de datos de ventas con una estructura desnormalizada, donde múltiples atributos se encontraban repetidos en una única tabla.
 
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/raw.png)
 
-se procedio a hacer las tablas de distintas columnas para ponerle un ID a cada atributo unico.
-Las colmunas que se tomaron son:
+El objetivo del proyecto fue normalizar el dataset mediante un modelo relacional, reduciendo redundancia, mejorando integridad de datos y facilitando futuros análisis.
+
+### Identificacion de entidades 
+
+Se identificaron los atributos con valores únicos que podían ser normalizados en tablas independientes:
   - **Category**
   - **Item**
   - **Color**
@@ -15,86 +18,149 @@ Las colmunas que se tomaron son:
   - **Shipping**
   - **Frecuency**
 
-Estas tablas (salvo la tabla de Item) comparten el siguiente querry:
+Cada una de estas entidades fue convertida en una tabla con un identificador único (ID) para asegurar consistencia y escalabilidad.
 
-```sql CREATE TABLE Categories(
-Category_id INT IDENTITTY(1,1) PRIMARY KEY,
-Category VARCHAR(50));
+## Creacion de tablas de dimensiones
+Exceptuando la tabla Item, todas las tablas de dimensiones comparten la misma lógica de creación:
 
-INSERT INTO Categories(Category)
-(SELECT DISTINCT[Category]
-FROM shopping)
+```sql CREATE TABLE Categories (
+    Category_id INT IDENTITY(1,1) PRIMARY KEY,
+    Category VARCHAR(50)
+);
+
+INSERT INTO Categories (Category)
+SELECT DISTINCT Category
+FROM shopping;
 ```
-Se estableció una relación entre la tabla *Item* y la tabla Category a través del campo Category_ID, permitiendo vincular cada ítem con su categoría correspondiente.
+### relacion item-category
+La tabla Item se relaciona con Category mediante una clave foránea (`Category_id`), permitiendo asociar cada producto a su categoría correspondiente.
 
-```sql CREATE TABLE items(
-Item_id  INT IDENTITY(1,1) PRIMARY KEY,
-Item VARCHAR(200),
-Category_id INT, FOREIGN KEY (Category_id ) REFERENCES categories(Category_id));
+```sql CREATE TABLE Items (
+    Item_id INT IDENTITY(1,1) PRIMARY KEY,
+    Item VARCHAR(200),
+    Category_id INT,
+    FOREIGN KEY (Category_id) REFERENCES Categories(Category_id)
+);
 
-INSERT INTO items (Item, Category_id)
+INSERT INTO Items (Item, Category_id)
 SELECT DISTINCT 
     s.Item_Purchased,
     c.Category_id
 FROM shopping s
-JOIN categories c ON s.Category = c.Category;
+JOIN Categories c ON s.Category = c.Category;
 ```
-Luego se hacen tablas para unificar los distintos IDs asi como una tabla con aquellas columnas que no se atomizaron.
-Para eso creo una vista que incluya todos los IDs
+
+
+Para facilitar la construcción de tablas intermedias y la integración de IDs, se creó una vista que centraliza todas las claves foráneas junto con los atributos relevantes.
+
+>Esta vista no forma parte del modelo final, sino que se utiliza como capa intermedia de transformación.
 
 ```sql CREATE VIEW shopping_view AS
-SELECT Customer_ID,Age,Gender,Item_id,Item_Purchased,Category_id,
-  Category,Purchase_Amount_USD,Location_id, sh.Location, size_id,
-  sh.Size,color_id, sh.Color, season_id,sh.Season,
-  ROUND(Review_Rating,1)AS Rating,Subscription_Status,shipping_id,sh.Shipping_Type,Discount_Applied,
-  Promo_Code_Used,Previous_Purchases,payment_id,Payment_Method,Frequency_of_Purchases
- FROM shopping sh
+SELECT 
+    sh.Customer_ID,
+    sh.Age,
+    sh.Gender,
+    i.Item_id,
+    sh.Item_Purchased,
+    c.Category_id,
+    sh.Purchase_Amount_USD,
+    l.Location_id,
+    sh.Location,
+    s.Size_id,
+    sh.Size,
+    co.Color_id,
+    sh.Color,
+    se.Season_id,
+    sh.Season,
+    ROUND(sh.Review_Rating, 1) AS Rating,
+    sh.Subscription_Status,
+    shi.Shipping_id,
+    sh.Shipping_Type,
+    sh.Discount_Applied,
+    sh.Promo_Code_Used,
+    sh.Previous_Purchases,
+    p.Payment_id,
+    sh.Payment_Method,
+    sh.Frequency_of_Purchases
+FROM shopping sh
 JOIN locations l ON l.Location = sh.Location
-JOIN season se ON se.season= sh.Season
-JOIN shipping shi ON shi.shipping= sh.Shipping_Type
-JOIN payment p ON p.payment=sh.Payment_Method
+JOIN season se ON se.Season = sh.Season
+JOIN shipping shi ON shi.Shipping = sh.Shipping_Type
+JOIN payment p ON p.Payment = sh.Payment_Method
 JOIN items i ON i.Item = sh.Item_Purchased
-JOIN color c ON c.color= sh.Color
-JOIN size s ON s.size = sh.Size;
+JOIN color co ON co.Color = sh.Color
+JOIN size s ON s.Size = sh.Size;
 ```
-armo las siguientes tablas:
+### Tablas intermedias
+
+A partir de la vista se construyeron las siguientes tablas:
 | Tabla | Atributos / IDs |
 | :--- | :--- |
 | **Item_Purchase** | Item_purchase_ID, Item_ID, Color_ID, Size_ID |
 | **Purchase_Condition** | Purchase_Condition_ID, Location_ID, Season_ID |
 | **Customer_Info** | Customer_ID, age, Gender, Subscription_Status |
 
+### Tabla Purchaseinfo
+Finalmente, se creó una tabla de hechos que consolida las claves foráneas y métricas principales de cada compra.
 
-Por ultimo hago una tabla que abarque los ID de las tablas anteriores
-
-```sql WITH ranked AS(
-SELECT sh.customer_id,
-    i.itempurchaseid,
-    p.purchaseconditionid,
-    sh.Discount_Applied,
-    sh.PurchaseAmountUSD,
-    sh.Rating,
-    ROW_NUMBER() OVER (PARTITION by sh.customerid order by sh.customerID,p.purchasecondition_id) AS rn
-FROM shopping_view sh
-  JOIN itempurchase i on i.itemid = sh.Itemid AND i.colorid= sh.colorid AND i.sizeid = sh.size_id
-  JOIN purchasecondition p on p.locationid= sh.Locationid and p.seasonid = sh.seasonid and p.shippingid = sh.shippingid and p.paymentid = sh.payment_id
+Para evitar duplicaciones producto de combinaciones múltiples de IDs, se utilizó `ROW_NUMBER()`.
+```sql WITH ranked AS (
+    SELECT 
+        sh.Customer_ID,
+        i.ItemPurchaseID,
+        p.PurchaseConditionID,
+        sh.Discount_Applied,
+        sh.PurchaseAmountUSD,
+        sh.Rating,
+        ROW_NUMBER() OVER (
+            PARTITION BY sh.Customer_ID 
+            ORDER BY sh.Customer_ID, p.PurchaseConditionID
+        ) AS rn
+    FROM shopping_view sh
+    JOIN ItemPurchase i 
+        ON i.ItemID = sh.Item_id 
+       AND i.ColorID = sh.Color_id 
+       AND i.SizeID = sh.Size_id
+    JOIN PurchaseCondition p 
+        ON p.LocationID = sh.Location_id
+       AND p.SeasonID = sh.Season_id
+       AND p.ShippingID = sh.Shipping_id
+       AND p.PaymentID = sh.Payment_id
 )
- 
-INSERT INTO purchaseinfo(customerid,
-  itempurchaseid,
- purchaseconditionid,
-  discount_applied,
-  purchaseamountusd,
-  review_rating
+
+INSERT INTO PurchaseInfo (
+    Customer_ID,
+    ItemPurchaseID,
+    PurchaseConditionID,
+    Discount_Applied,
+    PurchaseAmountUSD,
+    Review_Rating
 )
 SELECT
-  Customer_ID, Item_Purchase_ID, Purchase_Condition_ID, Discount_Applied, Purchase_Amountusd, rating
-FROM Ranked
+    Customer_ID,
+    ItemPurchaseID,
+    PurchaseConditionID,
+    Discount_Applied,
+    PurchaseAmountUSD,
+    Rating
+FROM ranked
 WHERE rn = 1;
 ```
 
-Aclaro que es necesario hacerla de esta manera ya que si no hacen todas las permutaciones de los IDs.
+>Este enfoque es necesario para evitar la generación de todas las permutaciones posibles entre los distintos IDs.
 
-Queda entonces la siguiente disposicion de tablas normalizadas
+### Modelo final normalizado
+El resultado es un modelo relacional con separación clara entre dimensiones y tabla de hechos:
 
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/finish.png)
+
+## Conclusión
+La normalización permitió:
+
+- Reducir redundancia.
+
+- Mejorar integridad referencial.
+
+- Facilitar análisis posteriores mediante SQL analítico.
+
+Este modelo sirve como base para análisis exploratorios, segmentación de clientes y evaluación de desempeño de productos.
