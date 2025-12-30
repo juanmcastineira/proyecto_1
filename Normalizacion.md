@@ -3,7 +3,7 @@ Se partió de una base de datos de ventas con una estructura desnormalizada, don
 
 ![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/raw.png)
 
-El objetivo del proyecto fue normalizar el dataset mediante un modelo relacional, reduciendo redundancia, mejorando integridad de datos y facilitando futuros análisis.
+El objetivo del proyecto fue **normalizar el dataset mediante un modelo relacional**, reduciendo redundancia, mejorando integridad de datos y facilitando futuros análisis.
 
 ### Identificacion de entidades 
 
@@ -21,7 +21,7 @@ Se identificaron los atributos con valores únicos que podían ser normalizados 
 Cada una de estas entidades fue convertida en una tabla con un identificador único (ID) para asegurar consistencia y escalabilidad.
 
 ## Creacion de tablas de dimensiones
-Exceptuando la tabla Item, todas las tablas de dimensiones comparten la misma lógica de creación:
+Exceptuando la tabla **Item**, todas las tablas de dimensiones comparten la misma lógica de creación:
 
 ```sql CREATE TABLE Categories (
     Category_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -33,7 +33,7 @@ SELECT DISTINCT Category
 FROM shopping;
 ```
 ### relacion item-category
-La tabla Item se relaciona con Category mediante una clave foránea (`Category_id`), permitiendo asociar cada producto a su categoría correspondiente.
+La tabla **Item** se relaciona con **Category** mediante una clave foránea (`Category_id`), permitiendo asociar cada producto a su categoría correspondiente.
 
 ```sql CREATE TABLE Items (
     Item_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -53,7 +53,7 @@ JOIN Categories c ON s.Category = c.Category;
 
 Para facilitar la construcción de tablas intermedias y la integración de IDs, se creó una vista que centraliza todas las claves foráneas junto con los atributos relevantes.
 
->Esta vista no forma parte del modelo final, sino que se utiliza como capa intermedia de transformación.
+>Esta vista **no forma parte del modelo final**, sino que se utiliza como capa intermedia de transformación.
 
 ```sql CREATE VIEW shopping_view AS
 SELECT 
