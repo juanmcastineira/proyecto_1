@@ -152,7 +152,7 @@ WHERE rn = 1;
 ### Modelo final normalizado
 El resultado es un modelo relacional con separación clara entre dimensiones y tabla de hechos:
 
-![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/finish.png)
+![Gráfico de Suscripciones](https://raw.githubusercontent.com/juanmcastineira/proyecto_1/main/images/final.png)
 
 ## Conclusión
 La normalización permitió:
